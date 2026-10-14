@@ -79,8 +79,16 @@ def main() -> int:
             reviews = [p for p in d.glob("*.md") if not p.name.startswith("_")] if d.exists() else []
             if reviews:
                 latest = max(reviews, key=lambda p: p.name)  # names like 2026-W35.md sort by date
-                gap = (today - dt.date.fromtimestamp(latest.stat().st_mtime)).days
-                (problems if gap > limit else notes).append(f"最近一次{label}是 {latest.name}，距今 {gap} 天")
+                match = re.fullmatch(r"(\d{4})-W(\d{2})\.md", latest.name)
+                if match:
+                    try:
+                        covered = dt.date.fromisocalendar(int(match.group(1)), int(match.group(2)), 7)
+                        gap = max(0, (today - covered).days)
+                        (problems if gap > limit else notes).append(f"最近一次{label}是 {latest.name}，距覆盖周结束 {gap} 天")
+                    except ValueError:
+                        problems.append(f"{label}文件名周数不正确：{latest.name}")
+                else:
+                    notes.append(f"{label}日期无法从文件名确认：{latest.name}，不使用文件修改时间推断")
             else:
                 notes.append(f"还没有{label}")
 

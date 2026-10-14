@@ -70,7 +70,7 @@ def main() -> int:
     if args.git:
         try:
             subprocess.run(["git", "init", "-q", str(target)], check=True)
-            print("已在记忆库里执行 git init，可随时回滚 AI 的改动。")
+            print("已在记忆库里执行 git init；保存提交后才能追踪和回滚对应改动。")
         except (OSError, subprocess.CalledProcessError) as e:
             print(f"git init 没有成功（{e}），记忆库本身不受影响。", file=sys.stderr)
 
