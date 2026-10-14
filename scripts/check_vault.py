@@ -78,7 +78,7 @@ def main() -> int:
         else:
             reviews = [p for p in d.glob("*.md") if not p.name.startswith("_")] if d.exists() else []
             if reviews:
-                latest = max(reviews, key=lambda p: p.stat().st_mtime)
+                latest = max(reviews, key=lambda p: p.name)  # names like 2026-W35.md sort by date
                 gap = (today - dt.date.fromtimestamp(latest.stat().st_mtime)).days
                 (problems if gap > limit else notes).append(f"最近一次{label}是 {latest.name}，距今 {gap} 天")
             else:
